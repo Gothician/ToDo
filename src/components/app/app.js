@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import LocalStorageService from '../../services/local-storage-service';
 import AppHeader from '../app-header';
 import SearchPanel from '../search-panel';
 import TodoList from '../todo-list';
@@ -9,16 +10,17 @@ import ItemAddForm from "../item-add-form";
 import './app.css';
 
 export default class App extends Component {
+  localStorageService = new LocalStorageService();
   todoQtty = 0;
 
   state = {
-    todoData: [
-      this.createTodoItem('Drink Coffee'),
-      this.createTodoItem('Make Awesome App'),
-      this.createTodoItem('Have a lunch')
-    ],
+    todoData: this.localStorageService.getTodoData(),
     filter: 'all',
     search: ''
+  }
+
+  updateTodoDataState(todoData) {
+
   }
 
   createTodoItem(label) {
@@ -31,10 +33,10 @@ export default class App extends Component {
   }
 
   addItem = (label) => {
-    this.setState(({ todoData }) => {
+    this.setState((state) => {
       return {
         //add new element into todo's array
-        todoData: [...todoData, this.createTodoItem(label)]
+        todoData: [...state.todoData, this.createTodoItem(label)]
       }
     })
   }
@@ -108,7 +110,8 @@ export default class App extends Component {
   }
 
   render() {
-    const todoDone = this.state.todoData.filter((el) => el.done).length;
+
+    const todoDone = this.state.todoData ? this.state.todoData.filter((el) => el.done).length : 0;
 
     return (
       <div className="todo-app">
