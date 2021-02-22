@@ -19,13 +19,24 @@ export default class App extends Component {
     search: ''
   }
 
-  updateTodoDataState(todoData) {
+  componentDidMount() {
+    const todoData = this.localStorageService.getTodoData();
+    this.setState({
+      todoData
+    });
+    this.todoQtty = todoData.length;
+  }
 
+  updateTodoDataState = (todoData) => {
+    this.localStorageService.putTodoData(todoData)
+    this.setState({
+      todoData: this.localStorageService.getTodoData()
+    });
   }
 
   createTodoItem(label) {
     return {
-      id: this.todoQtty++,
+      id: this.todoQtty++ + 1,
       label: label,
       done: false,
       important: false
@@ -33,11 +44,8 @@ export default class App extends Component {
   }
 
   addItem = (label) => {
-    this.setState((state) => {
-      return {
-        //add new element into todo's array
-        todoData: [...state.todoData, this.createTodoItem(label)]
-      }
+    this.updateTodoDataState({
+      todoData: [...this.state.todoData, this.createTodoItem(label)]
     })
   }
 
